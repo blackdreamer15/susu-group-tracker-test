@@ -1,0 +1,54 @@
+# Dependencies
+node_modules/
+
+# Environment variables and secrets
+.env*
+*.env
+
+# Exclude env example file
+!.env.example
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Diagnostic reports (Coredumps)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Testing & Coverage
+lib-cov
+coverage
+.nyc_output
+
+# Build outputs (If using TypeScript, Babel, or bundling)
+dist/
+build/
+out/
+.next/
+.nuxt/
+
+# IDEs and Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS metadata files
+.DS_Store
+Thumbs.db
+
+# Personal Document references
+_docs
