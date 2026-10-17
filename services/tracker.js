@@ -3,19 +3,9 @@ import { formatGhs, parseGhs } from "../utils/money.js";
 
 let group = null;
 
-function fail(statusCode, message, details) {
-	const error = new AppError(message, statusCode);
-
-	if (details) {
-		Object.assign(error, details);
-	}
-
-	throw error;
-}
-
 function requireGroup() {
 	if (!group) {
-		fail(404, "No group exists.");
+		throw new AppError("No group exists.", 404);
 	}
 }
 
@@ -23,13 +13,13 @@ function readAmount(amount) {
 	try {
 		return parseGhs(amount);
 	} catch (error) {
-		fail(400, error.message);
+		throw new AppError(error.message, 400);
 	}
 }
 
 function normalizeName(name) {
 	if (typeof name !== "string" || name.trim() === "") {
-		fail(400, "Name is required.");
+		throw new AppError("Name is required.", 400);
 	}
 
 	return name.trim();
@@ -42,7 +32,7 @@ function findMember(name) {
 	);
 
 	if (!member) {
-		fail(404, `Member ${trimmedName} does not exist.`);
+		throw new AppError(`Member ${trimmedName} does not exist.`, 404);
 	}
 
 	return member;
@@ -65,7 +55,7 @@ export function resetGroup() {
 
 export function createGroup(weeklyContribution) {
 	if (group) {
-		fail(409, "A group already exists.");
+		throw new AppError("A group already exists.", 409);
 	}
 
 	group = {
@@ -88,7 +78,7 @@ export function addMember(name) {
 	requireGroup();
 
 	if (!group.membershipOpen) {
-		fail(409, "Membership is locked until the current cycle ends.");
+		throw new AppError("Membership is locked until the current cycle ends.", 409);
 	}
 
 	const trimmedName = normalizeName(name);
@@ -97,7 +87,7 @@ export function addMember(name) {
 	);
 
 	if (duplicate) {
-		fail(409, `${duplicate.name} is already a member.`);
+		throw new AppError(`${duplicate.name} is already a member.`, 409);
 	}
 
 	group.members.push({ name: trimmedName, paid: 0 });
@@ -116,7 +106,7 @@ export function recordContribution(memberName, amount) {
 	const owes = group.weeklyContribution - member.paid;
 
 	if (payment > owes) {
-		fail(409, `${member.name} only owes ${formatGhs(owes)}.`);
+		throw new AppError(`${member.name} only owes ${formatGhs(owes)}.`, 409);
 	}
 
 	member.paid += payment;
@@ -135,7 +125,7 @@ export function createPayout() {
 	requireGroup();
 
 	if (group.members.length === 0) {
-		fail(409, "The group has no members.");
+		throw new AppError("The group has no members.", 409);
 	}
 
 	const outstanding = group.members
@@ -146,7 +136,9 @@ export function createPayout() {
 		}));
 
 	if (outstanding.length > 0) {
-		fail(409, `Week ${group.currentWeek} is not fully paid.`, { outstanding });
+		const error = new AppError(`Week ${group.currentWeek} is not fully paid.`, 409);
+		error.outstanding = outstanding;
+		throw error;
 	}
 
 	const recipient = group.members[group.nextIndex];
