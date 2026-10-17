@@ -15,11 +15,11 @@ if (process.env.NODE_ENV === "development") {
 
 app.use(express.json());
 
-app.post("/groups", groupController);
-app.post("/members", memberController);
-app.post("/contributions", contributionController);
-app.post("/payouts", payoutController);
-app.get("/report", reportController);
+app.post("/api/groups", groupController);
+app.post("/api/members", memberController);
+app.post("/api/contributions", contributionController);
+app.post("/api/payouts", payoutController);
+app.get("/api/report", reportController);
 
 // Global Error Handler
 app.use(errorController);
