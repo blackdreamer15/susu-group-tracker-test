@@ -1,6 +1,7 @@
 import express from "express";
 import morgan from "morgan";
 import contributionController from "./controllers/contributionController.js";
+import errorController from "./controllers/errorController.js";
 import groupController from "./controllers/groupController.js";
 import memberController from "./controllers/memberController.js";
 import payoutController from "./controllers/payoutController.js";
@@ -19,5 +20,8 @@ app.post("/members", memberController);
 app.post("/contributions", contributionController);
 app.post("/payouts", payoutController);
 app.get("/report", reportController);
+
+// Global Error Handler
+app.use(errorController);
 
 export default app;
