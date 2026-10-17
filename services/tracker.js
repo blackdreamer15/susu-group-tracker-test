@@ -1,10 +1,10 @@
+import AppError from "../utils/appError.js";
 import { formatGhs, parseGhs } from "../utils/money.js";
 
 let group = null;
 
 function fail(statusCode, message, details) {
-	const error = new Error(message);
-	error.statusCode = statusCode;
+	const error = new AppError(message, statusCode);
 
 	if (details) {
 		Object.assign(error, details);

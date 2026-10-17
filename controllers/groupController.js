@@ -5,6 +5,9 @@ export default function groupController(req, res) {
 		const group = createGroup(req.body.weeklyContribution);
 		res.status(201).json(group);
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		res.status(error.statusCode || 500).json({
+			status: error.status || "error",
+			message: error.message,
+		});
 	}
 }
